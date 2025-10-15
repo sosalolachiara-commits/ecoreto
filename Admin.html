@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>EcoReto - Panel de Revisión</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9fbe7;
+      padding: 20px;
+      color: #33691e;
+    }
+    h1 {
+      text-align: center;
+    }
+    .pendiente {
+      border: 2px solid #c5e1a5;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    img, video {
+      max-width: 100%;
+      height: auto;
+      margin-top: 10px;
+    }
+    button {
+      background-color: #66bb6a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    button.rechazar {
+      background-color: #ef5350;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛠️ Revisión de Tareas Pendientes</h1>
+  <div id="lista-pendientes"></div>
+
+  <script>
+    const usuario = localStorage.getItem("usuarioActivo");
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+
+    // si no es admin, redirigir
+    if (!usuario || !usuarios[usuario] || !usuarios[usuario].admin) {
+      alert("Acceso denegado. Solo administradores pueden ver esta página.");
+      window.location.href = "index.html";
+    }
+
+    const pendientes = JSON.parse(localStorage.getItem("pendientes")) || [];
+
+    const contenedor = document.getElementById("lista-pendientes");
+
+    if (pendientes.length === 0) {
+      contenedor.innerHTML = "<p>No hay tareas pendientes por revisar.</p>";
+    } else {
+      pendientes.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "pendiente";
+        div.innerHTML = `
+          <p><strong>Usuario:</strong> ${item.usuario}</p>
+          <p><strong>Tarea:</strong> ${item.tarea}</p>
+          <p><strong>Fecha:</strong> ${item.fecha}</p>
+          ${item.tipo.startsWith("video") ?
+            `<video controls src="${item.archivo}"></video>` :
+            `<img src="${item.archivo}" alt="Prueba">`
+          }
+          <div style="margin-top: 10px;">
+            <button onclick="aprobar(${index})">✅ Aprobar</button>
+            <button class="rechazar" onclick="rechazar(${index})">❌ Rechazar</button>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function aprobar(index) {
+      const pendientes = JSON.parse(localStorage.getItem("pendientes")) || [];
+      const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+      const item = pendientes[index];
+
+      if (!usuarios[item.usuario]) {
+        alert("Usuario no encontrado.");
+        return;
+      }
+
+      // Sumar puntos
+      usuarios[item.usuario].puntos += item.puntos;
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+      // Quitar tarea aprobada
+      pendientes.splice(index, 1);
+      localStorage.setItem("pendientes", JSON.stringify(pendientes));
+
+      alert("✅ Tarea aprobada y puntos acreditados.");
+      location.reload();
+    }
+
+    function rechazar(index) {
+      const pendientes = JSON.parse(localStorage.getItem("pendientes")) || [];
+
+      // Quitar tarea rechazada
+      pendientes.splice(index, 1);
+      localStorage.setItem("pendientes", JSON.stringify(pendientes));
+
+      alert("❌ Tarea rechazada.");
+      location.reload();
+    }
+  </script>
+
+</body>
+</html>

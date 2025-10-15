@@ -1,0 +1,120 @@
+<h2>Mi Armario</h2>
+<div id="armario-cabeza"><h3>🎩 Cabeza</h3></div>
+<div id="armario-cara"><h3>😊 Cara</h3></div>
+<div id="armario-cuerpo"><h3>👕 Cuerpo</h3></div>
+<div id="armario-fondos"><h3>🖼️ Fondos</h3></div>
+
+<h2>Mi Lomi</h2>
+<div id="mi-lomi">
+  <img id="fondo-lomi" class="capa" src="" alt="" />
+  <img id="base-lomi" class="capa" src="lomi.png" alt="Lomi" />
+  <img id="lomi-cabeza" class="capa" src="" alt="" />
+  <img id="lomi-cara" class="capa" src="" alt="" />
+  <img id="lomi-cuerpo" class="capa" src="" alt="" />
+</div>
+
+<style>
+  #mi-lomi {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 30px auto;
+  }
+  .capa {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+  }
+  .armario-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 2px solid #c8e6c9;
+    border-radius: 12px;
+    padding: 8px;
+    margin: 8px 0;
+  }
+  .armario-item img {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+    object-fit: contain;
+  }
+</style>
+
+<script>
+  const accesorios = {
+    cabeza: [
+      { id: "corona", nombre: "Corona", img: "corona.png" },
+      { id: "pelo", nombre: "Pelo", img: "pelo.png" },
+      { id: "gorro", nombre: "Gorro", img: "gorro.png" },
+      { id: "mono", nombre: "Moño", img: "mono.png" },
+      { id: "hojas", nombre: "Hojas", img: "hojas.png" },
+      { id: "vaquero", nombre: "Sombrero Vaquero", img: "sombrero_vaquero.png" },
+      { id: "bruja", nombre: "Sombrero Bruja", img: "sombrero_bruja.png" }
+    ],
+    cuerpo: [
+      { id: "corbata", nombre: "Corbata", img: "corbata.png" },
+      { id: "bufanda", nombre: "Bufanda", img: "bufanda.png" },
+      { id: "tutu", nombre: "Tutu", img: "tutu.png" },
+      { id: "collar", nombre: "Collar", img: "collar.png" }
+    ],
+    cara: [
+      { id: "maquillaje", nombre: "Maquillaje", img: "maquillaje.png" },
+      { id: "bigote", nombre: "Bigote", img: "bigote.png" },
+      { id: "anteojos", nombre: "Anteojos", img: "anteojos.png" },
+      { id: "monoculo", nombre: "Monóculo", img: "monoculo.png" }
+    ],
+    fondos: [
+      { id: "fondo1", nombre: "Fondo Bosque", img: "fondo_bosque.png" },
+      { id: "fondo2", nombre: "Fondo Jardín", img: "fondo_jardin.png" },
+      { id: "fondo3", nombre: "Fondo Montaña", img: "fondo_montana.png" }
+    ]
+  };
+
+  let accesoriosComprados = JSON.parse(localStorage.getItem("accesoriosComprados")) || [];
+  let equipado = JSON.parse(localStorage.getItem("equipado")) || {
+    cabeza: "", cara: "", cuerpo: "", fondo: ""
+  };
+
+  function renderArmario() {
+    for (const categoria in accesorios) {
+      const contenedor = document.getElementById("armario-" + categoria);
+      contenedor.innerHTML = `<h3>${contenedor.querySelector("h3").textContent}</h3>`; // reset
+
+      accesorios[categoria].forEach(acc => {
+        if (accesoriosComprados.includes(acc.id)) {
+          const div = document.createElement("div");
+          div.className = "armario-item";
+          div.innerHTML = `
+            <img src="${acc.img}" alt="${acc.nombre}" />
+            <div>
+              <p>${acc.nombre}</p>
+              <button onclick="equipar('${categoria}', '${acc.img}')">Equipar</button>
+            </div>
+          `;
+          contenedor.appendChild(div);
+        }
+      });
+    }
+    actualizarLomi();
+  }
+
+  function equipar(seccion, imagen) {
+    equipado[seccion] = imagen;
+    localStorage.setItem("equipado", JSON.stringify(equipado));
+    actualizarLomi();
+  }
+
+  function actualizarLomi() {
+    document.getElementById("lomi-cabeza").src = equipado.cabeza || "";
+    document.getElementById("lomi-cara").src = equipado.cara || "";
+    document.getElementById("lomi-cuerpo").src = equipado.cuerpo || "";
+    document.getElementById("fondo-lomi").src = equipado.fondo || "";
+  }
+
+  renderArmario();
+</script>

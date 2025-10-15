@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>EcoReto - Tienda</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      text-align: center;
+    }
+    .puntaje {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .producto {
+      display: flex;
+      align-items: center;
+      background-color: #ffffff;
+      border: 2px solid #c8e6c9;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .producto img {
+      width: 80px;
+      height: 80px;
+      margin-right: 15px;
+      object-fit: contain;
+    }
+    button {
+      background-color: #66bb6a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>EcoReto</h1>
+  <h2>Tienda de accesorios para Lomi</h2>
+  <div class="puntaje">🌟 Puntos actuales: <span id="puntos-tienda">0</span></div>
+
+  <div id="tienda-cabeza"><h3>🎩 Cabeza</h3></div>
+  <div id="tienda-cara"><h3>😊 Cara</h3></div>
+  <div id="tienda-cuerpo"><h3>👕 Cuerpo</h3></div>
+  <div id="tienda-fondos"><h3>🖼️ Fondos de pantalla</h3></div>
+
+  <script>
+    const accesorios = {
+      cabeza: [
+        { id: "corona", nombre: "Corona", precio: 500, img: "corona2.png" },
+        { id: "pelo", nombre: "Pelo", precio: 400, img: "pelo2.png" },
+        { id: "gorro", nombre: "Gorro", precio: 300, img: "gorro2.png" },
+        { id: "mono", nombre: "Moño", precio: 250, img: "moño2.png" },
+        { id: "hojas", nombre: "Hojas", precio: 50, img: "hojas2.png" },
+        { id: "vaquero", nombre: "Sombrero Vaquero", precio: 800, img: "vaquero2.png" },
+        { id: "bruja", nombre: "Sombrero Bruja", precio: 800, img: "bruja2.png" }
+      ],
+      cuerpo: [
+        { id: "corbata", nombre: "Corbata", precio: 400, img: "corbata2.png" },
+        { id: "bufanda", nombre: "Bufanda", precio: 300, img: "bufanda2.png" },
+        { id: "tutu", nombre: "Tutu", precio: 500, img: "tutu2.png" },
+        { id: "collar", nombre: "Collar", precio: 200, img: "collar2.png" }
+      ],
+      cara: [
+        { id: "maquillaje", nombre: "Maquillaje", precio: 300, img: "maquillaje2.png" },
+        { id: "bigote", nombre: "Bigote", precio: 250, img: "bigotes2.png" },
+        { id: "anteojos", nombre: "Anteojos", precio: 350, img: "anteojos2.png" },
+        { id: "monoculo", nombre: "Monóculo", precio: 400, img: "monoculo2.png" }
+      ],
+      fondos: [
+        { id: "fondo1", nombre: "Fondo Bosque", precio: 300, img: "fondo_bosque.png" },
+        { id: "fondo2", nombre: "Fondo Jardín", precio: 300, img: "fondo_jardin.png" },
+        { id: "fondo3", nombre: "Fondo Montaña", precio: 300, img: "fondo_montana.png" }
+      ]
+    };
+
+    let puntos = parseInt(localStorage.getItem("puntosEcoReto")) || 0;
+    document.getElementById("puntos-tienda").textContent = puntos;
+
+    let accesoriosComprados = JSON.parse(localStorage.getItem("accesoriosComprados")) || [];
+
+    for (const categoria in accesorios) {
+      const contenedor = document.getElementById("tienda-" + categoria);
+      accesorios[categoria].forEach(acc => {
+        const comprado = accesoriosComprados.includes(acc.id);
+        const div = document.createElement("div");
+        div.className = "producto";
+        div.innerHTML = `
+          <img src="${acc.img}" alt="${acc.nombre}" />
+          <div>
+            <p>${acc.nombre} — ${acc.precio} pts</p>
+            <button onclick="comprar('${acc.id}', ${acc.precio})" id="btn-${acc.id}" ${comprado ? "disabled" : ""}>
+              ${comprado ? "✔ Comprado" : "Comprar"}
+            </button>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function comprar(id, precio) {
+      if (puntos < precio) {
+        alert("No tenés puntos suficientes 😥");
+        return;
+      }
+
+      if (!accesoriosComprados.includes(id)) {
+        puntos -= precio;
+        accesoriosComprados.push(id);
+
+        localStorage.setItem("puntosEcoReto", puntos);
+        localStorage.setItem("accesoriosComprados", JSON.stringify(accesoriosComprados));
+
+        document.getElementById("puntos-tienda").textContent = puntos;
+
+        const boton = document.getElementById("btn-" + id);
+        boton.textContent = "✔ Comprado";
+        boton.disabled = true;
+
+        alert("¡Compraste " + id + "! 🛍️");
+      }
+    }
+  </script>
+
+</body>
+</html>

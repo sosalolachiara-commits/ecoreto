@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoReto - Cuida el planeta con Lomi</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fdf6e3;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      text-align: center;
+      padding-top: 40px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #388e3c;
+    }
+    p {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+    }
+    img {
+      width: 200px;
+      height: auto;
+      margin: 1rem 0;
+    }
+    .botones {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .boton {
+      background-color: #66bb6a;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .boton:hover {
+      background-color: #4caf50;
+    }
+    .formulario {
+      background-color: #ffffff;
+      border: 2px solid #c8e6c9;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+      width: 300px;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    input {
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Bienvenido a EcoReto</h1>
+  <p>Ganá puntos cuidando el planeta y personalizá a tu lombriz virtual: <strong>Lomi</strong> 🪱🌍</p>
+  <img src="lomi.png" alt="Lomi">
+  
+  <div class="botones">
+    <button class="boton" onclick="mostrarLogin()">Ingresar</button>
+    <button class="boton" onclick="mostrarRegistro()">Registrarse</button>
+  </div>
+
+  <!-- Formulario de registro -->
+  <div id="form-registro" class="formulario">
+    <h3>Crear cuenta</h3>
+    <input type="text" id="reg-usuario" placeholder="Usuario">
+    <input type="password" id="reg-pass" placeholder="Contraseña">
+    <button class="boton" onclick="registrar()">Crear cuenta</button>
+  </div>
+
+  <!-- Formulario de login -->
+  <div id="form-login" class="formulario">
+    <h3>Iniciar sesión</h3>
+    <input type="text" id="login-usuario" placeholder="Usuario">
+    <input type="password" id="login-pass" placeholder="Contraseña">
+    <button class="boton" onclick="iniciarSesion()">Entrar</button>
+  </div>
+
+  <script>
+    function mostrarRegistro() {
+      document.getElementById("form-registro").style.display = "flex";
+      document.getElementById("form-login").style.display = "none";
+    }
+
+    function mostrarLogin() {
+      document.getElementById("form-login").style.display = "flex";
+      document.getElementById("form-registro").style.display = "none";
+    }
+
+    function registrar() {
+  const usuario = document.getElementById("reg-usuario").value.trim();
+  const pass = document.getElementById("reg-pass").value.trim();
+
+  if (!usuario || !pass) {
+    alert("Completá todos los campos.");
+    return;
+  }
+
+  let usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+
+  if (usuarios[usuario]) {
+    alert("Ese usuario ya existe.");
+    return;
+  }
+
+  usuarios[usuario] = {
+  contraseña: pass,
+  admin: (usuario === "sha.d0u"),
+    puntos: 0,
+    accesorios: [],
+    equipado: { cabeza: "", cara: "", cuerpo: "", fondo: "" }
+  };
+
+  localStorage.setItem("usuarios", JSON.stringify(usuarios));
+  alert("¡Cuenta creada con éxito! Ahora podés iniciar sesión.");
+  mostrarLogin();
+}
+
+    function iniciarSesion() {
+      const usuario = document.getElementById("login-usuario").value.trim();
+      const pass = document.getElementById("login-pass").value.trim();
+
+      const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+
+      if (!usuarios[usuario]) {
+        alert("Usuario no encontrado.");
+        return;
+      }
+
+      if (usuarios[usuario].contraseña !== pass) {
+        alert("Contraseña incorrecta.");
+        return;
+      }
+
+      localStorage.setItem("usuarioActivo", usuario);
+      alert("¡Bienvenido/a, " + usuario + "! 🎉");
+   localStorage.setItem("usuarioActivo", usuario);
+window.location.href = "inicio.html";   
+    }
+  </script>
+
+</body> 
+</html>

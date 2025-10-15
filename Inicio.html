@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>EcoReto - Inicio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f8e9;
+      color: #33691e;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .info {
+      max-width: 700px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border: 2px solid #c5e1a5;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .acciones {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      background-color: #7cb342;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌱 ¡Bienvenido a EcoReto!</h1>
+  <h2 id="saludo"></h2>
+  <div class="info">
+    <p><strong>¿Qué es el compostaje?</strong></p>
+    <p>El compostaje es un proceso natural mediante el cual los restos orgánicos como cáscaras de frutas, verduras, yerba, café, hojas secas y otros materiales biodegradables se transforman en abono para las plantas. Este abono es rico en nutrientes y mejora la calidad del suelo, promoviendo una agricultura y jardinería más sustentables.</p>
+
+    <p><strong>¿Por qué es importante?</strong></p>
+    <p>Al compostar, reducís la cantidad de residuos que terminan en los basurales, ayudás a disminuir la contaminación del suelo y del aire, y cerrás el ciclo de los nutrientes devolviendo a la tierra lo que proviene de ella.</p>
+
+    <p><strong>¿Cómo hacerlo en casa?</strong></p>
+    <ul>
+      <li>🔹 Separá los restos orgánicos de la basura común: frutas, verduras, yerba, café, cáscaras, etc.</li>
+      <li>🔹 Conseguí un recipiente o compostera (puede ser un balde con tapa con agujeros).</li>
+      <li>🔹 Alterná capas de materiales húmedos (restos de comida) con secos (hojas secas, cartón, servilletas usadas sin tinta).</li>
+      <li>🔹 Remové el contenido cada ciertos días para que entre aire.</li>
+      <li>🔹 En unas semanas notarás que se va transformando en un abono oscuro con olor a tierra fértil.</li>
+    </ul>
+
+    <p><strong>Consejo:</strong> No pongas carne, lácteos ni aceites, ya que pueden generar malos olores o atraer animales no deseados.</p>
+    <p>💚 ¡Cada pequeño paso cuenta! Compostar es una forma simple y poderosa de cuidar el planeta desde tu casa.</p>
+  </div>
+
+  <div class="acciones">
+    <button onclick="irATareas()">📝 Ver tareas</button>
+    <button onclick="irALomi()">🧸 Ver mi Lomi</button>
+    <button onclick="irATienda()">🛒 Ir a la tienda</button>
+    <button id="admin-btn" onclick="irAAdmin()" style="display: none;">🛠️ Panel de revisión</button>
+    <button onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+  </div>
+
+  <script>
+    const usuario = localStorage.getItem("usuarioActivo");
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+
+    if (!usuario || !usuarios[usuario]) {
+      alert("Por favor iniciá sesión.");
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("saludo").textContent = `Hola, ${usuario}! 🌟`;
+    document.getElementById("admin-btn").style.display = usuarios[usuario].admin ? "inline-block" : "none";
+
+    function irATareas() {
+      window.location.href = "tareas .html";
+    }
+
+    function irALomi() {
+      window.location.href = "Armarioborrador.html";
+    }
+
+    function irATienda() {
+      window.location.href = "tienda3.html";
+    }
+
+    function irAAdmin() {
+      window.location.href = "Admin.html";
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem("usuarioActivo");
+      window.location.href = "index.html";
+    }
+  </script>
+
+</body>
+</html>

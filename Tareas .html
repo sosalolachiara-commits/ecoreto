@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>EcoReto - Tareas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .tarea {
+      background-color: #ffffff;
+      border: 2px solid #c8e6c9;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .puntaje {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    input[type="file"] {
+      margin-top: 8px;
+    }
+    button {
+      background-color: #66bb6a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>EcoReto: Composta y Recicla</h1>
+  <div class="puntaje">🌟 Puntos acumulados: <span id="puntos">0</span></div>
+
+  <div id="lista-tareas"></div>
+
+  <script>
+    const usuario = localStorage.getItem("usuarioActivo");
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+    const tareasRealizadas = JSON.parse(localStorage.getItem("tareasRealizadas")) || {};
+
+    if (!usuario || !usuarios[usuario]) {
+      alert("Por favor iniciá sesión.");
+      window.location.href = "index.html";
+    }
+
+    const tareas = [
+      { texto: "Foto de restos orgánicos separados para compost", puntos: 20 },
+      { texto: "Foto de compostera casera en uso", puntos: 50 },
+      { texto: "Foto del momento en que tiran restos en la compostera", puntos: 30 },
+      { texto: "Foto de lombrices trabajando en la compostera", puntos: 80 },
+      { texto: "Foto del compost listo para usar", puntos: 100 },
+      { texto: "Foto fertilizando plantas con compost casero", puntos: 40 },
+      { texto: "Video corto explicando cómo hacer compost en casa", puntos: 150 },
+      { texto: "Foto separando residuos reciclables", puntos: 20 },
+      { texto: "Foto llevando reciclables al punto verde", puntos: 100 },
+      { texto: "Foto reutilizando un envase", puntos: 40 },
+      { texto: "Foto tirando pilas o electrónicos en contenedor especial", puntos: 150 }
+    ];
+
+    document.getElementById("puntos").textContent = usuarios[usuario].puntos || 0;
+
+    const contenedor = document.getElementById("lista-tareas");
+
+    const hoy = new Date().toISOString().split("T")[0];
+    if (!tareasRealizadas[usuario]) tareasRealizadas[usuario] = {};
+    if (!tareasRealizadas[usuario][hoy]) tareasRealizadas[usuario][hoy] = [];
+
+    tareas.forEach((tarea, index) => {
+      const yaHecha = tareasRealizadas[usuario][hoy].includes(index);
+      const div = document.createElement("div");
+      div.className = "tarea";
+      div.innerHTML = `
+  <p>📌 ${tarea.texto}</p>
+  <p><strong>💰 Valor:</strong> ${tarea.puntos} puntos</p>
+  <input type="file" accept="image/*,video/*" id="file-${index}" ${yaHecha ? "disabled" : ""}>
+  <button onclick="subirPrueba(${index})" id="btn-${index}" ${yaHecha ? "disabled" : ""}>
+    ${yaHecha ? "✔ Enviado" : "Subir prueba"}
+  </button>
+`;
+      contenedor.appendChild(div);
+    });
+
+    function subirPrueba(index) {
+      const fileInput = document.getElementById(`file-${index}`);
+      const button = document.getElementById(`btn-${index}`);
+      const archivo = fileInput.files[0];
+
+      if (!archivo) {
+        alert("Seleccioná una foto o video como prueba.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const base64 = reader.result;
+
+        const pendientes = JSON.parse(localStorage.getItem("pendientes")) || [];
+
+        const objetoTarea = {
+          usuario: usuario,
+          tarea: tareas[index].texto,
+          puntos: tareas[index].puntos,
+          fecha: new Date().toLocaleDateString(),
+          tipo: archivo.type,
+          archivo: base64 // ⬅️ base64 para que se pueda ver después
+        };
+
+        pendientes.push(objetoTarea);
+        localStorage.setItem("pendientes", JSON.stringify(pendientes));
+
+        // Marcar tarea como realizada
+        tareasRealizadas[usuario][hoy].push(index);
+        localStorage.setItem("tareasRealizadas", JSON.stringify(tareasRealizadas));
+
+        fileInput.disabled = true;
+        button.disabled = true;
+        button.textContent = "⏳ En revisión";
+
+        alert("Tu prueba fue enviada. Un administrador la revisará pronto.");
+      };
+
+      reader.readAsDataURL(archivo); // Leer archivo como base64
+    }
+  </script>
+
+</body>
+</html>
