@@ -88,7 +88,9 @@
       ]
     };
 
-    let puntos = parseInt(localStorage.getItem("puntosEcoReto")) || 0;
+    const usuarioActivo = localStorage.getItem("usuarioActivo");
+const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+let puntos = usuarios[usuarioActivo]?.puntos || 0;
     document.getElementById("puntos-tienda").textContent = puntos;
 
     let accesoriosComprados = JSON.parse(localStorage.getItem("accesoriosComprados")) || [];
